@@ -1,0 +1,3 @@
+app_db: appdb
+app_user: appuser
+app_pass: "ChangeMeApp!"

@@ -1,0 +1,30 @@
+# Ansible artifacts
+*.retry
+*.log
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+ENV/
+.venv/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Sensitive files
+*.vault
+*.secret
+*.conf
+admin.conf
+/home/azureuser/admin.conf

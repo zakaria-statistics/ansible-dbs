@@ -1,0 +1,33 @@
+---
+# Needs: community.postgresql
+- name: Ensure driver present
+  apt:
+    name: python3-psycopg2
+    state: present
+
+- name: Create application database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ app_db }}"
+    state: present
+
+- name: Create application user with ALL on app DB
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "{{ app_user }}"
+    password: "{{ app_pass }}"
+    db: "{{ app_db }}"
+    priv: "ALL"
+    role_attr_flags: "LOGIN"
+
+# Smoke test (SELECT 1) — prouve la connectivité locale TCP et les droits
+- name: Smoke test (SELECT 1)
+  shell: >
+    PGPASSWORD='{{ app_pass }}'
+    psql "host=127.0.0.1 port=5432 dbname={{ app_db }} user={{ app_user }} sslmode=disable"
+    -tAc 'SELECT 1;'
+  register: pg_ping
+  changed_when: false
+
+- debug:
+    msg: "Postgres SELECT 1 => {{ pg_ping.stdout | default('?') }}"

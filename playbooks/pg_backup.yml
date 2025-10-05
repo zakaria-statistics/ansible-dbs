@@ -1,0 +1,7 @@
+---
+- hosts: dbs_pg
+  become: true
+  vars_files:
+    - ../group_vars/dbs_pg_backup.yml
+  roles:
+    - pg_backup

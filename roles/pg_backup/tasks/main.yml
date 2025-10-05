@@ -1,0 +1,36 @@
+---
+- name: Ensure backup directory exists
+  file:
+    path: "{{ pg_backup_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0750"
+
+- name: Install logical backup script (pg_dump -Fc)
+  copy:
+    dest: /usr/local/bin/pg_backup.sh
+    mode: "0750"
+    owner: root
+    group: root
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      BACKUP_DIR="{{ pg_backup_dir }}"
+      RETENTION_DAYS="{{ pg_backup_retention_days }}"
+      DBS="{{ pg_backup_dbs | join(' ') }}"
+      TS="$(date +%F_%H%M%S)"
+      mkdir -p "${BACKUP_DIR}"
+      for DB in ${DBS}; do
+        OUT="${BACKUP_DIR}/${DB}_${TS}.dump"
+        sudo -u postgres pg_dump -Fc --file="${OUT}" "${DB}"
+      done
+      find "${BACKUP_DIR}" -type f -name "*.dump" -mtime +${RETENTION_DAYS} -delete
+
+- name: Create daily cron ({{ pg_backup_hour }}:{{ pg_backup_minute }})
+  cron:
+    name: "Postgres logical backup"
+    user: root
+    minute: "{{ pg_backup_minute }}"
+    hour: "{{ pg_backup_hour }}"
+    job: "/usr/local/bin/pg_backup.sh >/var/log/pg_backup.log 2>&1"

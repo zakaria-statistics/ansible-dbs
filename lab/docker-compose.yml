@@ -1,0 +1,16 @@
+services:
+  pgvm:
+    build: .
+    container_name: pgvm
+    privileged: true # systemd needs this in Docker
+    cgroup: host # give it cgroups
+    environment:
+      - container=docker
+    command: ["/sbin/init"]
+    ports:
+      - "2222:22"
+    tmpfs:
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw

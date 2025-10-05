@@ -1,0 +1,8 @@
+---
+- hosts: dbs_pg
+  become: true
+  vars_files:
+    - ../group_vars/dbs_pg_install.yml
+    - ../group_vars/dbs_pg_users.yml
+  roles:
+    - pg_users

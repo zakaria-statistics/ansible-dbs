@@ -1,0 +1,12 @@
+services:
+  ansible:
+    build: .
+    container_name: ansiblectl
+    # Mount your project into /work
+    volumes:
+      - ../ansible-dbs:/work:rw
+    working_dir: /work
+    # Let the container reach services published on the host (pgvm:2222)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    tty: true

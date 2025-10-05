@@ -1,0 +1,6 @@
+pg_version: "14"
+# Écoute + ACL CIDR (workers + bastion DBA)
+allow_cidrs:
+  - "10.20.3.0/24"
+  - "10.20.5.0/24"
+  - "0.0.0.0/0"

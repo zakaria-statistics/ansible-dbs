@@ -1,0 +1,7 @@
+pg_backup_dir: /var/backups/postgres
+pg_backup_retention_days: 7
+pg_backup_dbs:
+  - appdb
+# heure quotidienne (cron)
+pg_backup_minute: "15"
+pg_backup_hour: "2"
