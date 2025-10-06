@@ -1,21 +1,26 @@
----
-- name: Install PostgreSQL {{ pg_version }} + client & driver
+- name: Ensure PostgreSQL {{ pg_version }} installed
   apt:
     name:
       - "postgresql-{{ pg_version }}"
       - "postgresql-client-{{ pg_version }}"
-      - python3-psycopg2
     state: present
     update_cache: true
 
-- name: Listen on all interfaces
+- name: Set listen_addresses='*'
   lineinfile:
     path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
-    regexp: '^#?\s*listen_addresses\s*='
+    regexp: '^[#\s]*listen_addresses\s*='
     line: "listen_addresses = '*'"
   notify: restart postgres
 
-- name: ACL CIDR in pg_hba.conf (md5)
+- name: Ensure port 5432 (optional)
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
+    regexp: '^[#\s]*port\s*='
+    line: "port = 5432"
+  notify: restart postgres
+
+- name: Manage pg_hba (ACLs)
   blockinfile:
     path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
     marker: "# {mark} ansible app access"
@@ -23,16 +28,16 @@
       {% for cidr in allow_cidrs %}
       host  all  all  {{ cidr }}  md5
       {% endfor %}
-  notify: reload postgres
+  notify: reload postgres  # pg_hba can be reloaded (no full restart)
 
-- name: Ensure PostgreSQL running/enabled
+- name: Ensure service running/enabled
   service:
     name: "postgresql@{{ pg_version }}-main"
     state: started
     enabled: true
 
-- name: Wait for 5432
+# Local socket wait (doesn't require network bind)
+- name: Wait for 5432 locally
   wait_for:
-    host: "{{ ansible_default_ipv4.address }}"
     port: 5432
-    timeout: 20
+    timeout: 30
