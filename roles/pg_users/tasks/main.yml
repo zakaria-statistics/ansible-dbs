@@ -2,8 +2,11 @@
 # Needs: community.postgresql
 - name: Ensure driver present
   apt:
-    name: python3-psycopg2
+    name: 
+      - acl
+      - python3-psycopg2
     state: present
+    update_cache: true
 
 - name: Create application database
   become_user: postgres
