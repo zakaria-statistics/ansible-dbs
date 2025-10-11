@@ -6,3 +6,4 @@ allow_cidrs:
 pg_hba_method: "scram-sha-256"
 
 app_db: "appdb"
+super_user: "vault_admin"
