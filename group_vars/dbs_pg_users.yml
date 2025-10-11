@@ -1,3 +1,8 @@
+# regular user for test
 app_db: appdb
 app_user: appuser
 app_pass: "ChangeMeApp!"
+
+# super user for vault
+super_user: "vault_admin"
+super_pwd: "StrongVaultAdmin!"
