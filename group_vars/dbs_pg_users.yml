@@ -6,3 +6,7 @@ app_pass: "ChangeMeApp!"
 # super user for vault
 super_user: "vault_admin"
 super_pwd: "StrongVaultAdmin!"
+
+# Connection to each DB host; these tasks run on the DB VMs themselves.
+pg_login_user: postgres            # local socket superuser
+pg_login_unix_socket: /var/run/postgresql  # Debian/Ubuntu default; use None if TCP

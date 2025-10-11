@@ -16,10 +16,12 @@
 
 - name: Create superuser
   become_user: postgres
-  community.postgresql.postgresql_db:
+  community.postgresql.postgresql_user:
     name: "{{ super_user }}"
     password: "{{ super_pwd }}"
     role_attr_flags: "SUPERUSER,LOGIN"
+    state: present
+    
 
 - name: Create application user with ALL on app DB
   become_user: postgres
