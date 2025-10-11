@@ -30,6 +30,20 @@
       {% endfor %}
   notify: reload postgres  # pg_hba can be reloaded (no full restart)
 
+- name: Manage pg_hba (specific allows first)
+  blockinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
+    marker: "# {mark} ansible app access"
+    # Ensure our block sits near the top for precedence
+    insertbefore: BOF
+    block: |
+      # Allow Vault to manage creds on {{ app_db }}
+      host    {{ app_db }}   {{ super_user }}   {{ allow_cidrs }}      {{ pg_hba_method }}
+      # Allow kube workloads to access {{ app_db }}
+      host    {{ app_db }}   all                {{ allow_cidrs }}   {{ pg_hba_method }}
+  notify: reload postgres
+
+
 - name: Ensure service running/enabled
   service:
     name: "postgresql@{{ pg_version }}-main"
