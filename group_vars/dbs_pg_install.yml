@@ -3,6 +3,7 @@ pg_version: "14"
 allow_cidrs:
   - "10.20.0.0/16"
 
+
 pg_hba_method: "scram-sha-256"
 
 app_db: "appdb"

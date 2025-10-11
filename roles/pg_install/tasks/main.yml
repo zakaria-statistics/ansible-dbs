@@ -38,9 +38,13 @@
     insertbefore: BOF
     block: |
       # Allow Vault to manage creds on {{ app_db }}
-      host    {{ app_db }}   {{ super_user }}   {{ allow_cidrs }}      {{ pg_hba_method }}
+      {% for cidr in allow_cidrs %}
+      host    {{ app_db }}   {{ super_user }}   {{ cidr }}      {{ pg_hba_method }}
+      {% endfor %}
       # Allow kube workloads to access {{ app_db }}
-      host    {{ app_db }}   all                {{ allow_cidrs }}   {{ pg_hba_method }}
+      {% for cidr in allow_cidrs %}
+      host    {{ app_db }}   all                {{ cidr }}   {{ pg_hba_method }}
+      {% endfor %}  
   notify: reload postgres
 
 
